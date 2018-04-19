@@ -2,11 +2,16 @@
 // Valid thru v1.7.2
 
 //	STM32F4 UART3_INIT UART3_INIT: ( -- )
-//	If setting BAUD MYBAUD MUST BE USED FIRST
-//	THIS IS TO PRESERVE YOUR BAUD DURING HARD FAULT RESET
-//	Use DEFAULT_BAUD UNLESS DBAUD IS ZERO, THEN USE UBAUD VALUE
-//	WHEN DBAUD IS NOT ZERO USE DEFAULT_BAUD	        // pwrup
-//	WHEN DBAUD IS ZERO USE UBAUD			// RESET
+//UART3_INIT: should be renamed. It sets baud rates for the UART's BRR register
+//and programs the BRR, determined by system vars DBAUD and UBAUD or a user
+//supplied decimal baud rate value.
+
+//	User use of this word has to use MYBAUD first. IT MUST BE USED FIRST.
+//	THIS IS TO PRESERVE YOUR BAUD DURING HARD FAULT RESET.
+
+//      Logic in this word:
+//	WHEN DBAUD IS NOT ZERO USE DEFAULT_BAUD	        // pwrup unint ram
+//	WHEN DBAUD IS ZERO USE UBAUD			// RESET sysinited
 
  SECTION .text : CONST (2)
 UART3_INIT_NFA:

@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\Clyde W Phillips Jr\Desktop\FISH v1.72\settings\FISH_STM32F4_407vg_Disco_Port.STM32F407vg_Disco_Debug.general.xcl" --backend -f "C:\Users\Clyde W Phillips Jr\Desktop\FISH v1.72\settings\FISH_STM32F4_407vg_Disco_Port.STM32F407vg_Disco_Debug.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\settings\FISH_STM32F4_407vg_Disco_Port.STM32F407vg_Disco_Debug.general.xcl" --backend -f "C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\settings\FISH_STM32F4_407vg_Disco_Port.STM32F407vg_Disco_Debug.driver.xcl" 
 }
 else
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\Clyde W Phillips Jr\Desktop\FISH v1.72\settings\FISH_STM32F4_407vg_Disco_Port.STM32F407vg_Disco_Debug.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\Clyde W Phillips Jr\Desktop\FISH v1.72\settings\FISH_STM32F4_407vg_Disco_Port.STM32F407vg_Disco_Debug.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\settings\FISH_STM32F4_407vg_Disco_Port.STM32F407vg_Disco_Debug.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\settings\FISH_STM32F4_407vg_Disco_Port.STM32F407vg_Disco_Debug.driver.xcl" 
 }
