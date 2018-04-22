@@ -5,13 +5,15 @@
 //UART3_INIT: should be renamed. It sets baud rates for the UART's BRR register
 //and programs the BRR, determined by system vars DBAUD and UBAUD or a user
 //supplied decimal baud rate value.
+//Can this handle a baud parameter without breaking UBAUD's concept?
 
-//	User use of this word has to use MYBAUD first. IT MUST BE USED FIRST.
-//	THIS IS TO PRESERVE YOUR BAUD DURING HARD FAULT RESET.
+//	User use of this word MUST use MYBAUD first. IT MUST BE USED FIRST.
+//	THIS IS TO PRESERVE YOUR BAUD DURING HARD FAULT RESET, which will 
+//      get reset to default baud ~ mucking your terminal up. No fun~!
 
 //      Logic in this word:
 //	WHEN DBAUD IS NOT ZERO USE DEFAULT_BAUD	        // pwrup unint ram
-//	WHEN DBAUD IS ZERO USE UBAUD			// RESET sysinited
+//	WHEN DBAUD IS ZERO USE UBAUD			// when called or reset
 
  SECTION .text : CONST (2)
 UART3_INIT_NFA:
@@ -42,9 +44,7 @@ BAUD1:
 	DC32	RFROM   	// 2580h = 9600 DEFAULT_BAUD
 	DC32	SLASH
 	DC32	LIT, USART3_BRR
-        
 //        DC32 NOOP
-        
-        DC32    STORE           // 1117h FOR 9600/42MHZ PCLK1
-	DC32	SEMIS
+        DC32    STORE           // 1117h FOR 9600/42MHZ PCLK1D
+        DC32	SEMIS
 

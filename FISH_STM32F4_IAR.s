@@ -7,11 +7,11 @@ $FISH_STM32F4_MAIN_INCLUDES.h
 // 2DO: Add VIO_UARTX, VIO_KEY, VIO_?KEY and VIO_EMIT
 // (EMIT), (KEY?), and (KEY).
 
-// v1.8 SPI for Smart-IO
+// v1.8 4th tos/nos caching
 
-// v1.7.2 Fix backspace issue
+// v1.7.2 Fixed backspace issue
 
-// v1.7:
+// v1.7.1:
 
 // Fix NUMBER by merge with NXP which works correctly!
 // 2DO: Restore SYSTICK ISR to ASM version
@@ -387,7 +387,7 @@ ALLOT_NFA:
 	DC32	HERE_NFA
 ALLOT:
 	DC32	DOCOL
-	DC32	DICTSPACE	// \ -- n_r0
+	DC32	DICTSPACE	// \ -- n
         DC32    OVER, SUBB
 	DC32	ZLESS
 	DC32	ZBRAN
@@ -455,9 +455,9 @@ ALIGN_PAD_DO:
 	DC32	SEMIS
 
 
-//	, COMMA:	( n_r0 -- ) ALIGNED
+//	, COMMA:	( n -- ) ALIGNED
 //	IF DICTIONAIRY FULL PRINT Error MESSAGE AND Abort.
-//	Write n_r0 into next ALIGNED dictionary memory cell, DP reflected by HERE
+//	Write n into next ALIGNED dictionary memory cell, DP reflected by HERE
 
  SECTION .text : CONST (2)
 COMMA_NFA:
@@ -467,7 +467,7 @@ COMMA_NFA:
 	DC32	ALIGN_NFA
 COMMA:
 	DC32	DOCOL
-	DC32	DICTSPACE	// \ -- n_r0
+	DC32	DICTSPACE	// \ -- n
 	DC32	ZLESS
 	DC32	ZBRAN
 	DC32	COMMA_OK-.
@@ -479,9 +479,9 @@ COMMA_OK:
 	DC32	SEMIS
 
 
-//	C, CCOMMA:	( n_r0 -- ) Warning: UNALIGNED:
+//	C, CCOMMA:	( n -- ) Warning: UNALIGNED:
 //	IF DICTIONAIRY FULL PRINT Error MESSAGE AND Abort.
-//	Store LS 8 bits of n_r0 into the next available dictionary byte, advancing
+//	Store LS 8 bits of n into the next available dictionary byte, advancing
 //	the dictionary pointer.
 //	CAUTION!
 //	ALLOT and C, (CCOMMA:) ARE THE ONLY WORDS THAT CAN ALLOT UNEVEN AMOUNTS
@@ -497,7 +497,7 @@ CCOMMA_NFA:
 	DC32	COMMA_NFA
 CCOMMA:
 	DC32	DOCOL
-	DC32	DICTSPACE	// \ -- n_r0
+	DC32	DICTSPACE	// \ -- n
 	DC32	ZLESS
 	DC32	ZBRAN
 	DC32	CCOMMA_OK-.
@@ -512,9 +512,9 @@ CCOMMA_OK:
 	DC32	SEMIS
 
 
-//	VARALLOT VARALLOT:	( n_r0 -- addr ) Value stored here is ALIGNED
+//	VARALLOT VARALLOT:	( n -- addr ) Value stored here is ALIGNED
 //	IF USERVAR SPACE FULL PRINT Error MESSAGE AND Abort.
-//	Add n_r0 * 32 bits to the RAMVARSPACE pointer UP.
+//	Add n * 32 bits to the RAMVARSPACE pointer UP.
 //	Used to allocate space in Ram for VAR's and other system data structures
 
  SECTION .text : CONST (2)
@@ -526,7 +526,7 @@ VARALLOT_NFA:
 	DC32	CCOMMA_NFA
 VARALLOT:
 	DC32	DOCOL
-	DC32	VARSPACE		// \ -- n_r0
+	DC32	VARSPACE		// \ -- n
 	DC32	FOUR, SLASH, OVER, SUBB
 	DC32	ZLESS
 	DC32	ZBRAN
@@ -543,8 +543,8 @@ VARALLOT:
 
 VALLOT_OK:
 	DC32    UP_SV, AT       // Address of this allotment
-	DC32    SWAP            // n_r0
-	DC32    FOUR, STAR      // n_r0 = 4 bytes
+	DC32    SWAP            // n
+	DC32    FOUR, STAR      // n = 4 bytes
 	DC32    UP_SV
 	DC32    PSTORE          // Address of next var available
 	DC32    SEMIS
@@ -1235,8 +1235,8 @@ EXPE33:
 	DC32	SEMIS
 
 
-//	COUNT COUNT:	( addr1 --- addr2 n_r0 )
-//	Leave the byte address addr2 and byte count n_r0 of a count byte string,
+//	COUNT COUNT:	( addr1 --- addr2 n )
+//	Leave the byte address addr2 and byte count n of a count byte string,
 //      beginning at address addr1. It is presumed that the first byte at
 //      addr1 contains the text byte count and the actual text starts with
 //      the second byte. NFA's may report SMUDGE'd byte counts, handled only
@@ -1257,7 +1257,7 @@ COUNT:
 	DC32	ONEP
 	DC32	SWAP
 //        DC32    CATLT7F
-	DC32	CAT     // n_r0 could be SMUDGE'd count from NFA's
+	DC32	CAT     // n could be SMUDGE'd count from NFA's
 	DC32	SEMIS   // Only internal usage is ID.
 
 
@@ -1369,7 +1369,8 @@ BYE_NFA:
 BYE:
 	DC32 	.+5
  SECTION .text : CODE (2)
-        B       FM3_COLD      // __iar_program_start
+//        B       FM3_COLD      // __iar_program_start
+        B       STM32Fx_COLD_FISH
  LTORG
 
 
@@ -1644,7 +1645,7 @@ ROT:
 	DPUSH			//  --  LSW MSW )
 
 
-//	I I:	( -- n_r0 )
+//	I I:	( -- n )
 //      Used within a DO-LOOP to copy the loop index to the stack. Other use
 //      is implementation dependent.
 //      See R.
@@ -1724,7 +1725,7 @@ LEAVE:
 	NEXT
 
 
-//	R> RFROM:	( -- n_r0 )
+//	R> RFROM:	( -- n )
 //      Remove the top value from the return stack and leave it on the
 //      computation stack. See >R and R.
 
@@ -1757,7 +1758,7 @@ R:
 	LDR     t, [r]	// Get Index
 	TPUSH
 
-//	>R TOR:	( n_r0 -- )
+//	>R TOR:	( n -- )
 //      Remove a number from the computation stack and place as the most
 //      accessable on the return stack. Use should be balanced with R> in
 //      the same definition.
@@ -1793,7 +1794,7 @@ OVER_NFA:
 OVER:
 	DC32	.+5
  SECTION .text : CODE (2)
-	DPUSH		// n2
+	POP2w		// n2
 #ifdef TOSCT
 // Get new t - This could become REFRESHt
 	LDR	t, [p]		// t invalid so get it
@@ -2027,8 +2028,8 @@ FEND:
 	NEXT
 
 
-//	ERASE ERASE:	( addr n_r0 -- )
-//      Clear a region of memory to zero from addr over n_r0 addresses.
+//	ERASE ERASE:	( addr n -- )
+//      Clear a region of memory to zero from addr over n addresses.
 
  SECTION .text : CONST (2)
 ERASE_NFA:
@@ -2061,8 +2062,8 @@ BLANKS:
 	DC32	SEMIS
 
 
-//	+! PSTORE:	( n_r0 addr -- )
-//	Add n_r0 to the value at the address.
+//	+! PSTORE:	( n addr -- )
+//	Add n to the value at the address.
 //	Pronounced Plus Store
 
  SECTION .text : CONST (2)
@@ -2086,7 +2087,7 @@ PSTORE:
 	NEXT
 
 
-//	@ AT:	( addr -- n_r0 )
+//	@ AT:	( addr -- n )
 //	Read 32 bit contents of address to TOS.
 //	Pronounced Fetch, as in Fetch word at addr.
 
@@ -2129,8 +2130,8 @@ CAT:
 	TPUSH
 
 
-//	! STORE:	( n_r0 addr -- )
-//      Store n_r0 at address. Pronounced "Store".
+//	! STORE:	( n addr -- )
+//      Store n at address. Pronounced "Store".
 
  SECTION .text : CONST (2)
 STORE_NFA:
@@ -2147,8 +2148,8 @@ STORE:
 	NEXT
 
 
-//	C! CSTORE:	( n_r0 addr -- )
-//      Store LS 8 bits of n_r0 at address. Pronounced "Char Store".
+//	C! CSTORE:	( n addr -- )
+//      Store LS 8 bits of n at address. Pronounced "Char Store".
 
  SECTION .text : CONST (2)
 CSTORE_NFA:
@@ -2274,8 +2275,8 @@ DLIT1:
 	DC32	SEMIS
 
 
-//	LITERAL LITERAL:	( n_r0 -- ) IMMEDIATE
-//	If compiling, then compile the stack value n_r0 as a 32 bit literal.
+//	LITERAL LITERAL:	( n -- ) IMMEDIATE
+//	If compiling, then compile the stack value n as a 32 bit literal.
 //	This definition is immediate so that it will execute during a colon
 //	definition. The intended use is:
 //	: xxx    [ calculate ]  LITERAL  ; //
@@ -2349,9 +2350,9 @@ HOLD:
 	DC32	SEMIS
 
 
-//	SIGN SIGN:	( n_r0 d=<LSW MSW> -- d=<LSW MSW> )
+//	SIGN SIGN:	( n d=<LSW MSW> -- d=<LSW MSW> )
 //      Place an ascii "-" sign just before a converted numeric output
-//      string in the text output buffer when n_r0 is negative. n_r0 is discarded
+//      string in the text output buffer when n is negative. n is discarded
 //      but double number dnum is maintained. Must be used between <# and #>.
 
  SECTION .text : CONST (2)
@@ -2521,7 +2522,7 @@ BUILDS:
 //	stack. See I, LOOP, +LOOP, LEAVE.
 //
 //	When compiling within the colon definition, DO compiles (DO), leaves
-//	the following address addr and n_r0 for later error checking.
+//	the following address addr and n for later error checking.
 
  SECTION .text : CONST (2)
 PLOOP_NFA:
@@ -2540,7 +2541,7 @@ PLOOP:
 	DC32	SEMIS
 
 
-//	LOOP LOOP:	( addr n_r0 -- ) IMMEDIATE
+//	LOOP LOOP:	( addr n -- ) IMMEDIATE
 //	Occurs in a colon-definition in form:
 //		DO ... LOOP
 //	At run-time, LOOP selectively controls branching back to the
@@ -2550,7 +2551,7 @@ PLOOP:
 //	the parameters are discarded and execution continues ahead.
 //
 //	At compile-time. LOOP compiles (LOOP) and uses addr to calculate an
-//	offset to DO. n_r0 is used for error testing.
+//	offset to DO. n is used for error testing.
 
  SECTION .text : CONST (2)
 LOOP_NFA:
@@ -2570,7 +2571,7 @@ LOOP:
 
 
 //	DO DO:	( n1 n2 -- ) IMMEDIATE
-//		(addr n_r0 -- ) COMPILE
+//		(addr n -- ) COMPILE
 //	Occurs in a colon-definition in form:
 //	DO ... LOOP
 
@@ -2590,7 +2591,7 @@ DO:
 	DC32	SEMIS
 
 
-//	ENDIF ENDIF:	( addr n_r0 -- ) IMMEDIATE
+//	ENDIF ENDIF:	( addr n -- ) IMMEDIATE
 //	Occurs in a colon-definition in form:
 //		IF ... ENDIF
 //		IF ... ELSE ... ENDIF
@@ -2600,7 +2601,7 @@ DO:
 //	in fig-FORTH. See also IF and ELSE.
 //
 //	At compile-time, ENDIF computes the forward branch offset from addr
-//	to HERE and stores it at addr. n_r0 is used for error tests.
+//	to HERE and stores it at addr. n is used for error tests.
 
  SECTION .text : CONST (2)
 ENDIF_NFA:
@@ -2675,7 +2676,7 @@ ELSE:
 
 
 //	IF IF:	( f -- ) IMMEDIATE
-//		( -- addr n_r0 ) COMPILE
+//		( -- addr n ) COMPILE
 //	Occurs is a colon-definition in form:
 //		IF (tp) ...  ENDIF      .
 //		IF (tp) ... ELSE (fp) ... ENDIF
@@ -2687,7 +2688,7 @@ ELSE:
 //	skips to just after ENDIF..
 //
 //	At compile-time IF compiles 0BRANCH and reserves space for an offset
-//	at addr. addr and n_r0 are used later for resolution of the offset and
+//	at addr. addr and n are used later for resolution of the offset and
 //	error testing.
 
  SECTION .text : CONST (2)
@@ -2709,14 +2710,14 @@ IF:
 
 
 //	UNTIL UNTIL:	( f -- ) IMMEDIATE
-//			( addr n_r0 -- ) COMPILE:
+//			( addr n -- ) COMPILE:
 //	Occurs within a colon-definition in the form:
 //		BEGIN ... UNTIL
 //	At run-time, UNTIL controls the conditional branch back to the
 //	corresponding BEGIN. If f is false, execution returns to just after.
 //	BEGIN: 	if true, execution continues ahead.
 //	At compile-time, UNTIL compiles (0BRANCH) and an offset from HERE to
-//	addr. n_r0 is used for error tests.
+//	addr. n is used for error tests.
 
  SECTION .text : CONST (2)
 UNTIL_NFA:
@@ -2735,7 +2736,7 @@ UNTIL:
 	DC32	SEMIS
 
 
-//	AGAIN AGAIN:	( addr n_r0 -- ) IMMEDIATE
+//	AGAIN AGAIN:	( addr n -- ) IMMEDIATE
 //	Used in a colon-definition in the form:
 //			BEGIN ... AGAIN
 //	At run-time, AGAIN forces execution to return to corresponding BEGIN.
@@ -2743,7 +2744,7 @@ UNTIL:
 //	(unless R> DROP is executed one level below).
 //
 //	At compile time, AGAIN compiles BRANCH with an offset from HERE to
-//	addr. n_r0 is used for compile-time error checking.
+//	addr. n is used for compile-time error checking.
 
  SECTION .text : CONST (2)
 AGAIN_NFA:
@@ -2762,14 +2763,14 @@ AGAIN:
 	DC32	SEMIS
 
 
-//	REPEAT REPEAT:	( addr n_r0 -- ) IMMEDIATE
+//	REPEAT REPEAT:	( addr n -- ) IMMEDIATE
 //	Used within a colon-definition in the form:
 //		BEGIN ... WHILE ... REPEAT
 //	At run-time, REPEAT forces an unconditional branch back to just
 //	after the corresponding BEGIN.
 //
 //	At compile-time, REPEAT compiles BRANCH and the offset from HERE to
-//	addr. n_r0 is used for error testing.
+//	addr. n is used for error testing.
 
  SECTION .text : CONST (2)
 REPEAT_NFA:
@@ -2818,7 +2819,7 @@ WHILE:
 	DC32	SEMIS
 
 
-//	BEGIN BEGIN:	( -- addr n_r0 ) IMMEDIATE
+//	BEGIN BEGIN:	( -- addr n ) IMMEDIATE
 //	Occurs in a colon-definition in form:
 //	BEGIN ... UNTIL
 //	BEGIN ... AGAIN
@@ -2829,7 +2830,7 @@ WHILE:
 //	to BEGIN will occur if the top of the stack is false//
 //	for AGAIN and REPEAT a return to BEGIN always occurs.
 //
-//	At compile time BEGIN leaves its return address and n_r0 for compiler
+//	At compile time BEGIN leaves its return address and n for compiler
 //	error checking.
 
  SECTION .text : CONST (2)
@@ -2909,7 +2910,7 @@ CREATE_NFA:
 	DC32	IMMED_NFA
 CREATE:
 	DC32	DOCOL
-	DC32	DICTSPACE	//	\ -- n_r0
+	DC32	DICTSPACE	//	\ -- n
         DC32    LIT, 15, SUBB   // One less than smallest definition
 	DC32	ZLESS
 	DC32	ZBRAN
@@ -2981,12 +2982,12 @@ CREA1:
 	DC32	SEMIS
 
 
-//	CON CON:	( n_r0 -- )  MODIFIED: and CONSTANT renamed CON
+//	CON CON:	( n -- )  MODIFIED: and CONSTANT renamed CON
 //	IF DICTIONAIRY FULL PRINT Error MESSAGE AND Abort.
 //	A defining word used in the form:
-//              n_r0 CONSTANT CCcc
-//	to create word CCcc, with its parameter field containing n_r0. When
-//	CCcc is later executed, it will push the value of n_r0 to the stack.
+//              n CONSTANT CCcc
+//	to create word CCcc, with its parameter field containing n. When
+//	CCcc is later executed, it will push the value of n to the stack.
 
  SECTION .text : CONST (2)
 CONSTANT_NFA:
@@ -3180,9 +3181,9 @@ DPL_SV:
         DC32    DOCON, NDPL
 
 
-//	D.R DDOTR:	( sd=<LSW MSW> n_r0 -- ) SIGNED:
+//	D.R DDOTR:	( sd=<LSW MSW> n -- ) SIGNED:
 //	Print a signed double number sd right aligned
-//	in a field n_r0 characters wide.
+//	in a field n characters wide.
 
  SECTION .text : CONST (2)
 DDOTR_NFA:
@@ -3202,10 +3203,10 @@ DDOTR:
 	DC32	SIGN	// ( d=<LSW MSW> -- d=<LSW MSW> )
 	DC32	EDIGS	//	#>  ( d=<LSW MSW>  ---  addr  count )
 	DC32	RFROM	// GET THE N CHAR FIELD LEN
-	DC32	OVER	// ( addr count n_r0 -- addr count n_r0 count )
-	DC32	SUBB	// ( n_r0 addr count addr -- n_r0 addr coun_r0t-n )
-	DC32	SPACES	// SPACES  ( n_r0 -- )
-	DC32	TYPE	// ( n_r0 addr -- )
+	DC32	OVER	// ( addr count n -- addr count n count )
+	DC32	SUBB	// ( n addr count addr -- n addr count-n )
+	DC32	SPACES	// SPACES  ( n -- )
+	DC32	TYPE	// ( n addr -- )
 	DC32	SEMIS
 
 
@@ -3251,7 +3252,7 @@ DPLUS:
 	DPUSH			//  --  LSW MSW )
 
 
-//	S->D STOD:	( n_r0 -- d=<LSW MSW> ) SIGNED:
+//	S->D STOD:	( n -- d=<LSW MSW> ) SIGNED:
 //      Sign extend a single number to form a double number.
 //	: S->D DUP 0< NEGATE // hi level equivalent
 
@@ -3275,7 +3276,7 @@ STOD1:
 	DPUSH			//  --  LSW MSW )
 
 
-//	2* TWOSTAR:	( n_r0 -- n_r0*2 ) LSL 1
+//	2* TWOSTAR:	( n -- n*2 ) LSL 1
 
  SECTION .text : CONST (2)
 TWOSTAR_NFA:
@@ -3292,7 +3293,7 @@ TWOSTAR:
 	TPUSH
 
 
-//	2/ TWOSLASH:	( n_r0 -- n_r0/1 ) ASR 1 (FLOORED)
+//	2/ TWOSLASH:	( n -- n/1 ) ASR 1 (FLOORED)
 
  SECTION .text : CONST (2)
 TWOSLASH_NFA:
@@ -3309,7 +3310,7 @@ TWOSLASH:
 	TPUSH
         
 
-//	1- ONEM:	( n_r0 -- n_r0-1 )
+//	1- ONEM:	( n -- n-1 )
 
  SECTION .text : CONST (2)
 ONEM_NFA:
@@ -3360,7 +3361,7 @@ TWOP:
 	TPUSH
 
 
-//	4+ FOURP:	( n_r0 -- n_r0+4 )
+//	4+ FOURP:	( n -- n+4 )
 
  SECTION .text : CONST (2)
 FOURP_NFA:
@@ -3377,7 +3378,7 @@ FOURP:
 	TPUSH
 
 
-//	4- FOURM:	( n_r0 -- n_r0-4 )
+//	4- FOURM:	( n -- n-4 )
 
  SECTION .text : CONST (2)
 FOURM_NFA:
@@ -3720,7 +3721,7 @@ LESSTHAN:
 	CMP     n, w        // n1 < n2
 	BGT	LESS1
 
-	EORS	t, t    // zero t =< n_r0
+	EORS	t, t    // zero t =< n
 LESS1:
 	TPUSH
 
@@ -3771,7 +3772,7 @@ GREATERTHAN:
 	DC32	SEMIS
 
 
-//	0= ZEQU:	( n_r0 -- f )
+//	0= ZEQU:	( n -- f )
 //	Leave a true flag is the number is equal to zero, otherwise leave a
 //	false flag. CHANGED Code dependent on true flag being 1 FOR -1 TRUE
 
@@ -3800,7 +3801,7 @@ ZEQU_ZERO:
 	TPUSH
 
 
-//	0< ZLESS:	( n_r0 -- f )
+//	0< ZLESS:	( n -- f )
 //	Leave a true flag if the number is less than zero (negative),
 //	otherwise leave a false flag.
 
@@ -3902,8 +3903,8 @@ NEGATE:
 	TPUSH
 
 
-//	ABS ABS:	( n_r0 -- ub )
-//      Leave the absolute value of n_r0 as un.
+//	ABS ABS:	( n -- ub )
+//      Leave the absolute value of n as un.
 
  SECTION .text : CONST (2)
 ABS1_NFA:
@@ -4073,8 +4074,8 @@ SXB:
 	TPUSH
 
 
-//	REVW REVW:	( n_r0 -- n_r0 )
-//	Reverse bytes in n_r0.
+//	REVW REVW:	( n -- n )
+//	Reverse bytes in n.
 
  SECTION .text : CONST (2)
 REVW_NFA:
@@ -4111,7 +4112,7 @@ ASR:
         TPUSH           ; shifted data
 
 
-//	LSR LSR:   ( n_r0 count -- n_r0' )
+//	LSR LSR:   ( n count -- n' )
 //      Logical (zero-extended) shift right by count.
 //	Valid count values are 0 to 31.
 
@@ -4131,7 +4132,7 @@ LSR:
         TPUSH           ; shifted data
 
 
-//	LSL LSL:   ( n_r0 count -- n_r0' )
+//	LSL LSL:   ( n count -- n' )
 //      Logical (zero-extended) shift left by count.
 //	Valid count values are 0 to 31.
 
@@ -4196,7 +4197,7 @@ DOTRU:
 	DC32	SEMIS
 
 
-//	U. UDOT:	( n_r0 -- ) USIGNED DOT
+//	U. UDOT:	( n -- ) USIGNED DOT
 
  SECTION .text : CONST (2)
 UDOT_NFA:
@@ -4229,7 +4230,7 @@ QUES:
 	DC32	SEMIS
 
 
-//	. DOT:	( n_r0 -- ) SIGNED 2'S COMPLEMENT:
+//	. DOT:	( n -- ) SIGNED 2'S COMPLEMENT:
 //	Print a number from a signed 32 bit two's complement value,
 //      converted according to the numeric base.
 //      A trailing blanks follows.
@@ -4248,11 +4249,11 @@ DOT:
 
 
 //------------------------------ DOTBASE SECTION -------------------------------
-//	.H DOTHEX:	( n_r0 -- )
+//	.H DOTHEX:	( n -- )
 //	Prints TOS in Hex using DOT, not affecting Base in the system
 
 #ifndef SRM
-//	.B DOTBIN:	( n_r0 -- )
+//	.B DOTBIN:	( n -- )
 //	Prints TOS in BINARY using DOT, not affecting Base in the system
 
  SECTION .text : CONST (2)
@@ -4287,7 +4288,7 @@ DOTHEX:
 
 
 #ifndef SRM
-//	.D DOTDEC:	( n_r0 -- )
+//	.D DOTDEC:	( n -- )
 //	Prints TOS in DECIMAL using DOT, not affecting Base in the system
 
  SECTION .text : CONST (2)
@@ -4326,11 +4327,11 @@ $FISH_STM32F4_UART3_INIT.s
 
 //=============================== UART0_INIT =================================//
 
-//	MYBAUD MYBAUD: ( n_r0 -- ) BAUD MUST BE IN DECIMAL or EQUIVALENT!!!
+//	MYBAUD MYBAUD: ( n -- ) BAUD MUST BE IN DECIMAL or EQUIVALENT!!!
 //	MUST BE USED BEFORE USING UART0_INIT!!!
 //	Because FISH does a reset if you invoke a HARD FAULT RESET
 //	THIS MECHANISM IS ESSENTIAL TO STAYING AT USER SET BAUDRATE THRU A RESET!
-//	SET NON-INIT RAM VARIABLES DBAUD TO ZERO AND UBAUD n_r0.
+//	SET NON-INIT RAM VARIABLES DBAUD TO ZERO AND UBAUD n.
 //	See UART0_INIT
 
  SECTION .text : CONST (2)
@@ -4439,8 +4440,8 @@ XON:
 
 //---------------- EMIT KEY ?KEY CR SECTION ------------------------------
 
-//	SPACES SPACES:	( n_r0 -- )
-//	Transmit n_r0 ascii blanks (0x20) to the output device.
+//	SPACES SPACES:	( n -- )
+//	Transmit n ascii blanks (0x20) to the output device.
 
  SECTION .text : CONST (2)
 SPACES_NFA:
@@ -4727,8 +4728,8 @@ NO_KEY:
  LTORG
 
 
-//	CRS CRS:	( n_r0 -- )
-//      Emit n_r0 cr'S (0x0d) and lf (0x0A)
+//	CRS CRS:	( n -- )
+//      Emit n cr'S (0x0d) and lf (0x0A)
 
  SECTION .text : CONST (2)
 CRS_NFA:
@@ -4948,7 +4949,7 @@ EHON:
 
 //-------------------------- DOTDICTSPACE SECTION ------------------------------
 
-//	.DS DOTDICTSPACE:	( n_r0 -- )
+//	.DS DOTDICTSPACE:	( n -- )
 //	Prints number of bytes availble in dictionary in DECIMAL using DOT,
 //	not affecting Base in the system
 
@@ -4979,7 +4980,7 @@ DOTDICTSPACE:
 
 //-------------------------- DOTVARSPACE SECTION -------------------------------
 
-//	.VS DOTVARSPACE:	( n_r0 -- )
+//	.VS DOTVARSPACE:	( n -- )
 //	Prints number of bytes availble in RAM VAR SPACE in DECIMAL using DOT,
 //	not affecting Base in the system.
 
@@ -5007,8 +5008,8 @@ DOTVARSPACE:
 	DC32	SEMIS
 
 
-//	DUMP DUMP:	( addr n_r0 -- )
-//	Print adrr and n_r0 lines of 4 columns of memory values in hexadecimal.
+//	DUMP DUMP:	( addr n -- )
+//	Print adrr and n lines of 4 columns of memory values in hexadecimal.
 //	Address must be even and a multiple of 4 else error message issued.
 //      Any key presssed will stop DUMP.
 
@@ -5022,7 +5023,7 @@ DUMP_NFA:
 DUMP:
 	DC32	DOCOL
 
-	DC32	OVER, QALIGNED  // \ -- addr n_r0
+	DC32	OVER, QALIGNED  // \ -- addr n
 // DON'T SAVE BASE UNTIL AFTER ALIGNED TEST
         DC32    BASE_TO_R12     // Save current BASE
         DC32    HEX
@@ -5226,7 +5227,7 @@ STCTR:
         DC32    DOCON, STICKER
 
 
-//      DELAY ( n_r0 value -- ) 7 E000E010h !   5 E000E010h !
+//      DELAY ( n value -- ) 7 E000E010h !   5 E000E010h !
  SECTION .text : CONST (2)
 DELAY_NFA:
 	DC8	0x85
@@ -5254,7 +5255,7 @@ DELAY:
 // If n=0 in t user is just setting reload value
         CMP     t, #0           // LOOP OF ZERO
         BEQ     DELAY_DONE
-// INTERRUPT VERSION: negate n_r0 to STCTR and leave when STCTR = 0
+// INTERRUPT VERSION: negate n to STCTR and leave when STCTR = 0
 // STI_ON: 7 E000E010h !  STI_OFF: 5 E000E010h ! E000E010h @ .H
 // Save and restore user interrupt setting
 // y = STICKER
@@ -5272,7 +5273,7 @@ DELAY_DONE:
  LTORG
 
 
-//	MS MS: ( n_r0 -- ) n_r0 * 1 millisecond execution time
+//	MS MS: ( n -- ) n * 1 millisecond execution time
 //      SYSTICK_IRQ_ON/OFF  STI_ON: 7 E000E010h !  STI_OFF: 5 E000E010h ! 
 
  SECTION .text : CONST (2)
@@ -5366,7 +5367,7 @@ WORDS1:  // ADD nfa length to current out_uv & verify it doesn't violate csll.
         DC32    DUP, PFA, LFA   // -- nfa lfa
         DC32    OVER, SUBB      // -- nfa (lfa - nfa)
 
-WORDS2: // -- nfa n_r0
+WORDS2: // -- nfa n
 
 	DC32	OUT_SV, AT
         DC32    PLUS

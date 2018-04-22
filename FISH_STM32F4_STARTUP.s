@@ -1,19 +1,20 @@
 // FISH_STM32F4_STARTUP.s
-// Valid thru v1.7.2
-// Rename FM3_Cold~!!!
-//-----------------------------------FM3_COLD-----------------------------------
+//Valid thru v1.7.2
+//----------------------------------------------------------------------
 #ifdef USE_CMAIN
  PUBLIC RET2c
 #endif
 
  SECTION .text : CODE (2)
  ALIGNROM 2,0xFFFFFFFF
- PUBLIC FM3_COLD
+ PUBLIC STM32Fx_COLD_FISH
  PUBLIC  __iar_program_start
 __iar_program_start
-// No MAIN() entry point!
+// MAIN() entry point defined by #Defines in FISH_STM32F4_CONFIG_DEFINES.h
+// means you can have c main() call FISH or not~!
+// #define USE_CMAIN     // Affects cstartup_M.c STM32Fx_COLD_FISH and RET2c
 // :NONAME FM0_COLD ( -- ) Reset Vector entry point. Setup FISH Virtual Machine.
-FM3_COLD:
+STM32Fx_COLD_FISH:
 // Initialize DICT RAM segment
 
 	ldr	n, = 0x11111111	        // fill pattern
@@ -21,12 +22,12 @@ FM3_COLD:
                                         // IN MEMMAP segment
 	ldr	y, = RAM_INIT_END       // BEFORE UNINT SECTION IN MEMMAP
 _fillRAM:
-	str	n, [t]                                               
+	str	n, [t]
 	adds	t, t, #4
 	cmp	t, y
 	blo	_fillRAM
         
-#ifdef USE_CMAINAAS     
+#ifdef USE_CMAIN
 //	PUSH lr to sp for BYE
 //	SUB	sp, sp, #4
 //	MOV	t, lr

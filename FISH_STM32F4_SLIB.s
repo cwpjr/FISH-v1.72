@@ -119,6 +119,13 @@ INITSO_SV:
 INITRO_SV:
         DC32    DOCON, INITRO
 
+//:NONAME	DPL_SV:	( -- addr of NDPL ) Contains # of digits after . in double number
+//	A system variable containing the number of digits to the right of the
+//	decimal on double integer input. It may also be used to hold output
+//	column location of a decimal point, in system generated formating. The
+//	default value on single number input is -1.
+//DPL_SV:
+//        DC32    DOCON, NDPL
 
 //:NONAME CSP_SV:	( -- addr of CSP ) Stack address save for compile error checking
 //       A system variable temporarily storing the stack pointer position, for

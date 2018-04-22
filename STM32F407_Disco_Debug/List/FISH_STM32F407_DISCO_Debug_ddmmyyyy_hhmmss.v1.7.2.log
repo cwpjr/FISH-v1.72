@@ -1,17 +1,17 @@
               definition:  __as_table_start
               definition:  __as_entries_start
-Loading object C:\Users\Clyde W Phillips Jr\Desktop\FISH v1.72\STM32F407_Disco_Debug\Obj\FISH_STM32F4_IAR.o.
+Loading object C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\STM32F407_Disco_Debug\Obj\FISH_STM32F4_IAR.o.
               reference :  C_CMSIS_ENABLE_IRQS
               reference :  C_CMSIS_DISABLE_IRQS
-              definition:  FM3_COLD
+              definition:  STM32Fx_COLD_FISH
               definition:  __iar_program_start
               definition:  FMx_SYSTICK_ISR
-Loading object C:\Users\Clyde W Phillips Jr\Desktop\FISH v1.72\STM32F407_Disco_Debug\Obj\main.o.
+Loading object C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\STM32F407_Disco_Debug\Obj\main.o.
               definition:  C_CMSIS_DISABLE_IRQS
               definition:  C_CMSIS_ENABLE_IRQS
               weak def  :  HardFault_Handler
-Loading object C:\Users\Clyde W Phillips Jr\Desktop\FISH v1.72\STM32F407_Disco_Debug\Obj\startup_stm32f4xx.o.
-              reference :  FM3_COLD
+Loading object C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\STM32F407_Disco_Debug\Obj\startup_stm32f4xx.o.
+              reference :  STM32Fx_COLD_FISH
               reference :  FMx_SYSTICK_ISR
               reference :  HardFault_Handler
               definition:  __vector_table
@@ -1284,7 +1284,7 @@ Marking from fragment #420 .text (10 startup_stm32f4xx.o)
 Marking from fragment #419 .text (9 startup_stm32f4xx.o)
   Marking symbol NMI_Handler                          (469 startup_stm32f4xx.o)
 Marking from fragment #418 .text (8 startup_stm32f4xx.o)
-  Marking symbol FM3_COLD                         Glb (2609 FISH_STM32F4_IAR.o)
+  Marking symbol STM32Fx_COLD_FISH                Glb (2609 FISH_STM32F4_IAR.o)
 Marking from fragment #417 .intvec (7 startup_stm32f4xx.o)
   Marking symbol CSTACK$$Limit                    Ext (559 startup_stm32f4xx.o)
   Marking symbol Reset_Handler                        (468 startup_stm32f4xx.o)
@@ -3234,7 +3234,7 @@ Marking from fragment #924 .text (9 FISH_STM32F4_IAR.o)
   Marking symbol CR                                   (1355 FISH_STM32F4_IAR.o)
   Marking symbol QUIT                                 (1347 FISH_STM32F4_IAR.o)
 Marking from fragment #923 .text (9 FISH_STM32F4_IAR.o)
-  Marking symbol FM3_COLD                         Glb (2609 FISH_STM32F4_IAR.o)
+  Marking symbol STM32Fx_COLD_FISH                Glb (2609 FISH_STM32F4_IAR.o)
 Marking from fragment #922 .text (9 FISH_STM32F4_IAR.o)
   Marking symbol FORGET_NFA                           (1559 FISH_STM32F4_IAR.o)
   Marking symbol BYE                                  (1568 FISH_STM32F4_IAR.o)

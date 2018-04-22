@@ -3,8 +3,6 @@
 //$PROJ_DIR$\stm32F205RC.icf
 // This include begins the .sym file
 
-//These includes are the issue now.
-
 $FISH_AUTHOR.h
 // This include is for generic IAR stuff
 $FISH_IAR.h
