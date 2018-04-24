@@ -23,9 +23,12 @@ BSOUT:
         DC32    BACKSPACE_CHAR, EMIT
         DC32    SPACE
         DC32    BACKSPACE_CHAR, EMIT
-        DC32    TIB_SV, IN_SV, AT, PLUS, ZERO, CSTORE //ONEM?
+        DC32    DUP       // TIB-addr
+        DC32    IN_SV, AT // offset addr
+        DC32    PLUS
+        DC32    ZERO, SWAP, CSTORE // 0 char, terminate string
         DC32    LIT, -4, OUT_SV, PSTORE // Keep OUT in synch
-        DC32    LIT, -1, IN_SV, PSTORE // Keep OUT in synch
+        DC32    LIT, -1, IN_SV, PSTORE // Keep IN in synch
         DC32    SEMIS
 
 //:NONAME zero_IN:       ( -- ) 

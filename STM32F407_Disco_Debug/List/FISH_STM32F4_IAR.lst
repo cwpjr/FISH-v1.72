@@ -1,12 +1,12 @@
 ###################################################################################################
 #                                                                                                 #
-#     IAR Assembler V8.22.1.15669/W32 for ARM 24/Apr/2018  15:00:24                               #
+#     IAR Assembler V8.22.1.15669/W32 for ARM 24/Apr/2018  15:32:40                               #
 #     Copyright 1999-2018 IAR Systems AB.                                                         #
 #                                                                                                 #
 #           Source file   =  C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\FISH_STM32F4_IAR.s   #
 #           List file     =  C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\STM32F407_Disco_Debug\List\FISH_STM32F4_IAR.lst#
 #           Object file   =  C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\STM32F407_Disco_Debug\Obj\FISH_STM32F4_IAR.o#
-#           Command line  =  -f C:\Users\CLYDEW~1\AppData\Local\Temp\EW31A0.tmp                   #
+#           Command line  =  -f C:\Users\CLYDEW~1\AppData\Local\Temp\EWBF3A.tmp                   #
 #                            (C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\FISH_STM32F4_IAR.s  #
 #                            -OC:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\STM32F407_Disco_Debug\Obj #
 #                            -s+ -M<> -w+ -r -DFISH_PubRel_WORDSET -DFISH_Debug_WORDSET           #
@@ -110,8 +110,8 @@
                   03230313800  
    80                           msg_FISH_TIMESTAMP:
    81    00000076 20617420              DC8     ' at '
-   82    0000007A 31353A30303A3         DC8     __TIME__        // Null string
-                  23400        
+   82    0000007A 31353A33323A3         DC8     __TIME__        // Null string
+                  43000        
    83                           #ifdef EOL_NAK
    84                           msg_SIGNON_DLE:
    85    00000083 1500                  DC8     0x15, 0
@@ -7669,7 +7669,7 @@
 #           CRC:0            #
 #        Errors:   0         #
 #        Warnings: 0         #
-#        Bytes: 83983        #
+#        Bytes: 83987        #
 ##############################
 
 
