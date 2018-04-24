@@ -1117,6 +1117,7 @@ EXPECT_NFA:
         DC32    TICK_NFA
 EXPECT:			// ( NOS TOS -- NOS TOS )
 	DC32	DOCOL	// ( TIB LEN -- )
+        DC32    zero_OUT, zero_IN
         DC32    ONEP    // ( TIB LEN+1 -- ) (Index and Limit)+1 for count byte
 	DC32	OVER	// ( TIB LEN+1 TIB -- )
 	DC32	PLUS	// ( TIB TIB+LEN+1 -- )
@@ -1209,6 +1210,7 @@ EXPE4:
 EXPE5:
 	DC32	I               // I=TIB Store char
 	DC32	CSTORE          // or 1rst null in CASE OF CR
+        DC32    ONE, IN_SV, PSTORE
 	DC32	ZERO            // 1rst or second null if cr
         // CASE OF CR ( TOS> 0 20h TIB -- )
 	DC32	I
@@ -5371,7 +5373,7 @@ WORDS1:  // ADD nfa length to current out_uv & verify it doesn't violate csll.
 
 WORDS2: // -- nfa n
 
-	DC32	OUT_SV, AT
+	DC32	OUT_SV, AT      // Use OUT to regulate line length.
         DC32    PLUS
 	DC32	LIT, 74         // was :NONAME CSLL - WORDS line length constant.
 	DC32	GREATERTHAN

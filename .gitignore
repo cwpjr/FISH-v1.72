@@ -1,0 +1,10 @@
+
+*.dep
+*.wsdt
+*.dbgdt
+*.out
+*.hex
+*.lst
+*.o
+*.sim
+*.map
