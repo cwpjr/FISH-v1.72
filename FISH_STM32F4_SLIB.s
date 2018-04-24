@@ -119,6 +119,13 @@ INITSO_SV:
 INITRO_SV:
         DC32    DOCON, INITRO
 
+//:NONAME	DPL_SV:	( -- addr of NDPL ) Contains # of digits after . in double number
+//	A system variable containing the number of digits to the right of the
+//	decimal on double integer input. It may also be used to hold output
+//	column location of a decimal point, in system generated formating. The
+//	default value on single number input is -1.
+//DPL_SV:
+//        DC32    DOCON, NDPL
 
 //:NONAME CSP_SV:	( -- addr of CSP ) Stack address save for compile error checking
 //       A system variable temporarily storing the stack pointer position, for
@@ -795,7 +802,7 @@ DOCON:
 LIT:
 	DC32	.+5
  SECTION .text : CODE (2)
-	LIT2t 	// LDM		i!, {t}
+	LIT2t 	// LDM i!, {t}, means 
 		// fetch memory i points to into {t}, inc i after
 	TPUSH
 
@@ -1143,8 +1150,8 @@ IF_EOL_SEND_XOFF:
 #ifdef  IO2TP
 	NEXT
 #else
-        LDR     n, = 0Ah        // ^J
-        CMP     t, n
+        LDR     n, = 0Ah        // ^J n_r1
+        CMP     t, n            // set carry flag or not
         BNE     CR_CHECK
 
 SUB_CR_4_NL:
@@ -1154,8 +1161,8 @@ SUB_CR_4_NL:
         B       EOL_SEND_XOFF
 
 CR_CHECK:
-        LDR	n, = 0Dh
-	CMP	t, n    // LEAVE CHAR IN T!!!!
+        LDR	n, = 0Dh        // n_r1
+	CMP	t, n            // LEAVE CHAR IN T_r0!!!!
 	BNE	NOT_CR
 
 EOL_SEND_XOFF:

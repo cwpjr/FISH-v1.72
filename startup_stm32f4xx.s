@@ -64,7 +64,7 @@
         SECTION .intvec: CODE:ROOT(2)
 
         EXTERN  __iar_program_start
-        EXTERN  FM3_COLD
+        EXTERN  STM32Fx_COLD_FISH
         EXTERN  FMx_SYSTICK_ISR
 #ifdef CMSIS_C        
         EXTERN  HardFault_Handler
@@ -76,9 +76,9 @@
         DATA
 __vector_table
         DCD     sfe(CSTACK)
-; Change to FM3_COLD bypasses run to FM3_COLD function in debugger
-; Reset_Handler B FM3_COLD allows debugger to stop there.
-        DCD     Reset_Handler             ; Reset Handler ; FM3_COLD
+; Change to STM32Fx_COLD_FISH bypasses run to STM32Fx_COLD_FISH function in debugger
+; Reset_Handler B STM32Fx_COLD_FISH allows debugger to stop there.
+        DCD     Reset_Handler             ; Reset Handler ; STM32Fx_COLD_FISH
         DCD     NMI_Handler               ; NMI Handler
         DCD     HardFault_Handler         ; Hard Fault Handler
         DCD     MemManage_Handler         ; MPU Fault Handler
@@ -186,7 +186,8 @@ AFT_INTVEC:
         PUBWEAK Reset_Handler
         SECTION .text:CODE:REORDER(2)
 Reset_Handler
-        B      FM3_COLD
+
+        B      STM32Fx_COLD_FISH
 
         PUBWEAK NMI_Handler
         SECTION .text:CODE:REORDER(1)
@@ -199,7 +200,7 @@ NMI_Handler
 HardFault_Handler
 ;        B HardFault_Handler
         B NVIC_SystemReset
-;        B      FM3_COLD
+;        B      STM32Fx_COLD_FISH
 #endif
 
         PUBWEAK MemManage_Handler
