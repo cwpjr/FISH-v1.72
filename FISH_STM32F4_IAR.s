@@ -4674,10 +4674,10 @@ KEY_INTERPRETED_ENTRY:
 KEY:
 	DC32	.+5
  SECTION .text : CODE (2)
-        LDR     w, = USART3_DR // 
-        LDR     x, = USART3_SR // 
+        LDR     w, = USART3_DR // Data Register w_r2
+        LDR     x, = USART3_SR // Status Register x_r3
 rxRDY?:
-        LDR     n, [x]          // Get Line Status
+        LDR     n, [x]          // Get Line Status from [x_r3] to n_r2 
 //      LSRS    n, n, #5        // Bit 5 RXNE: Read data register not empty
 // THIS IS ___ AND FAILS TEXT DOWNLOAD
         LSRS    n, n, #6        // Bit 6 ORIG - REQ'D FOR TEXT FILE DOWNLOAD
