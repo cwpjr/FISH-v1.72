@@ -1261,8 +1261,9 @@ COUNT:
 	DC32	SEMIS   // Only internal usage is ID.
 
 
-//      $LEN NULLSTRLEN:	( addr - addr len )
-//      Count length of null terminated string.
+//      $LEN NULLSTRLEN:	( addr --- addr len )
+//      Count length of null terminated string like 'c' does,
+//      and return the string len after addr.
 //      TYPE can be used after this word.
 
  SECTION .text : CONST (2)
@@ -1275,8 +1276,9 @@ NULLSTRLEN_NFA:
 NULLSTRLEN:
 	DC32	.+5
  SECTION .text : CODE (2)
-	NDPOP2w				// Get but leave addr on stack
-	EORS		t, t, t		// zero count
+	NDPOP2w                 // Put addr in w_R2 yet leave addr on stack
+                                // Usually TIB.
+	EORS	t, t, t		// zero count
 
 NSLEN_LOOP:
 	LDRB	        n, [w,t]
@@ -1872,9 +1874,9 @@ DUP:
 // NO NEED TO REFRESH t ?
 //#else DUP:
 // OPT by picking pops
-	LDR     t, [p]
+	LDR     t, [p]  //t_r0 p_r7
 //#endif
-	TPUSH
+	TPUSH   //// push t to p, pre decrement p
 
 //=============================== WORDCAT ====================================//
 //NOEXEC HEADERFORWORDCATEGORIES
@@ -4679,9 +4681,9 @@ rxRDY?:
 //      LSRS    n, n, #5        // Bit 5 RXNE: Read data register not empty
 // THIS IS ___ AND FAILS TEXT DOWNLOAD
         LSRS    n, n, #6        // Bit 6 ORIG - REQ'D FOR TEXT FILE DOWNLOAD
-        BCC     rxRDY?          // sets carry flag
+        BCC     rxRDY?          // sets carry flag to fall thru
 
-        LDR     t, [w]
+        LDR     t, [w]          // t_r0 w_r2 should be uart data register
         TPUSH
 #else
 	DC32	DOCOL, LIT, 0X0D, SEMIS		// cr executes NULL
