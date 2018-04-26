@@ -3,7 +3,7 @@
 // FISH_NXP_M0_PRO_WORDCAT  // Set CURRENT to WC_FISH_PRO_NFA
 // Use defines to break out 11xx and 81x Wordset versions
 
-$FISH_NXP_M0_PR0_CPUID.s
+//$FISH_STM32F4_PR0_CPUID.s
 
 //=============================== I2C WORDCAT ====================================//
 

@@ -23,8 +23,17 @@ BSOUT:
         DC32    BACKSPACE_CHAR, EMIT
         DC32    SPACE
         DC32    BACKSPACE_CHAR, EMIT
-        DC32    LIT, -3, OUT_SV, PSTORE // Keep OUT in synch
+        DC32    DUP       // TIB-addr
+        DC32    IN_SV, AT // offset addr
+        DC32    PLUS
+        DC32    ZERO, SWAP, CSTORE // 0 char, terminate string
+        DC32    LIT, -4, OUT_SV, PSTORE // Keep OUT in synch
+        DC32    LIT, -1, IN_SV, PSTORE // Keep IN in synch
         DC32    SEMIS
+
+//:NONAME zero_IN:       ( -- ) 
+zero_IN:
+        DC32	DOCOL, strva, 0, IN, SEMIS
 
 //:NONAME zero_OUT:       ( -- ) 
 zero_OUT:
@@ -713,8 +722,17 @@ until:	; ( x -- )
 SV_INIT_VALUES:
 // 4 words of System Variables
         DC32    DEFAULT_BASE            // NBASE
-        DC32    1                       // IN
-        DC32    0                       // OUT
+// EXPECT manages TIB with in (or should!) 
+//3BS FIX is for doing this.
+// IN_SV should be the actual store pointer for EXPECT?
+        DC32    0                       // IN_SV returns addr of integer offset
+                                        // into TIB
+// IN_SV should be the actual store pointer for EXPECT?
+// OUT_SV 
+        DC32    0                       // OUT_SV returns addr of integer offset
+                                        // of counted cahracters in the current 
+                                        // output string to the terminal.
+
         DC32    0                       // CSTATE
 // 5 addresses of System Data Structures
         DC32    PINIT                   // INITSO

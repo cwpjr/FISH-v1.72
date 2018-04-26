@@ -2,7 +2,7 @@
 // Valid thru v1.7.2
 // this define must keep RESET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //#define USE_CMAIN     // Affects cstartup_M.c FM0_COLD and RET2c
-#define FISH_STM32F4_Peripheral_Register_ADDRS
+#define FISH_STM32F4_GPIO_WC
 #define TRUE_EQU_NEG_ONE
 #define XON_XOFF        // Use XON_XOFF Flow Control
 #define ABORT_STOP_TILL_CO

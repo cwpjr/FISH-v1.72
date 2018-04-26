@@ -100,11 +100,7 @@ NOOP_NFA:
 	DC8	'NOO'
 	DC8	'P'+0x80
  ALIGNROM 2,0xFFFFFFFF
-#ifdef FISH_STM32F4_Peripheral_Register_ADDRS
-	DC32	WC_FISH_Peripheral_REG_ADDR_GPIO
-#else
 	DC32	0	// 0 START OF DICTIONARY = Last word in search
-#endif
 NOOP:
 	DC32	.+5
  SECTION .text : CODE (2)
@@ -1117,6 +1113,7 @@ EXPECT_NFA:
         DC32    TICK_NFA
 EXPECT:			// ( NOS TOS -- NOS TOS )
 	DC32	DOCOL	// ( TIB LEN -- )
+        DC32    zero_OUT, zero_IN
         DC32    ONEP    // ( TIB LEN+1 -- ) (Index and Limit)+1 for count byte
 	DC32	OVER	// ( TIB LEN+1 TIB -- )
 	DC32	PLUS	// ( TIB TIB+LEN+1 -- )
@@ -1209,6 +1206,7 @@ EXPE4:
 EXPE5:
 	DC32	I               // I=TIB Store char
 	DC32	CSTORE          // or 1rst null in CASE OF CR
+        DC32    ONE, IN_SV, PSTORE
 	DC32	ZERO            // 1rst or second null if cr
         // CASE OF CR ( TOS> 0 20h TIB -- )
 	DC32	I
@@ -1472,7 +1470,8 @@ COLD:
 
  SECTION .text : CONST (2)
 WC_FISH_SYS_NFA:
-	DC8	0x80+4+12
+	DC8	0x80+4+12        // +4 is format chars constant
+                                // +n is Name lenght
         DC8     0x0D, 0x0A
 	DC8	'FISH System:'
         DC8     0x0D, 0x0A+0x80
@@ -4674,16 +4673,16 @@ KEY_INTERPRETED_ENTRY:
 KEY:
 	DC32	.+5
  SECTION .text : CODE (2)
-        LDR     w, = USART3_DR // 
-        LDR     x, = USART3_SR // 
+        LDR     w, = USART3_DR // Data Register w_r2
+        LDR     x, = USART3_SR // Status Register x_r3
 rxRDY?:
-        LDR     n, [x]          // Get Line Status
-//      LSRS    n, n, #5        // Bit 5 RXNE: Read data register not empty
+        LDR     n, [x]         // Get Line Status value from [x_r3], put in n_r2 
+//      LSRS    n, n, #5       // Bit 5 RXNE: Read data register not empty
 // THIS IS ___ AND FAILS TEXT DOWNLOAD
-        LSRS    n, n, #6        // Bit 6 ORIG - REQ'D FOR TEXT FILE DOWNLOAD
-        BCC     rxRDY?          // sets carry flag to fall thru
+        LSRS    n, n, #6       // Bit 6 ORIG - REQ'D FOR TEXT FILE DOWNLOAD
+        BCC     rxRDY?         // sets carry flag to fall thru
 
-        LDR     t, [w]          // t_r0 w_r2 should be uart data register
+        LDR     t, [w]         // t_r0 w_r2 should be uart data register
         TPUSH
 #else
 	DC32	DOCOL, LIT, 0X0D, SEMIS		// cr executes NULL
@@ -4722,7 +4721,7 @@ QKEY:
 #ifdef TRUE_EQU_NEG_ONE
 	SUBS	t, #1   // -1
 #else
-        ADDS    t, #1
+        ADDS    t, #1   // 1
 #endif
 #endif  // DEFAULT TO NO KEY IF IO2TP
 NO_KEY:
@@ -5371,7 +5370,7 @@ WORDS1:  // ADD nfa length to current out_uv & verify it doesn't violate csll.
 
 WORDS2: // -- nfa n
 
-	DC32	OUT_SV, AT
+	DC32	OUT_SV, AT      // Use OUT to regulate line length.
         DC32    PLUS
 	DC32	LIT, 74         // was :NONAME CSLL - WORDS line length constant.
 	DC32	GREATERTHAN
@@ -5508,7 +5507,8 @@ FISH:
 //	WC_FISH_PubRel: = FISH Reference Model: CATEGORY
  SECTION .text : CONST (2)
 WC_FISH_PubRel_NFA:
-	DC8	0x80+4+21
+	DC8	0x80+4+21        // +4 is format chars constant
+                                // +n is Name lenght
         DC8     0x0D, 0x0A
 	DC8	'FISH Reference Model:'
         DC8     0x0D, 0x0A+0x80
@@ -5521,6 +5521,11 @@ WC_FISH_PubRel_NFA:
 
 #ifdef FISH_STM_M3_PRO_WORDCAT
 $FISH_STM_M3_PRO_WORDSET.s
+#endif
+//=============================== WORDCAT ====================================//
+
+#ifdef FISH_STM32F4_GPIO
+$FISH_STM32F4_Peripheral_Register_ADDRS.h
 #endif
 // FIRST WORDCAT
 

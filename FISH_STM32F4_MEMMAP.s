@@ -83,7 +83,7 @@ SV_START:
 // BYTE VALUES
 NBASE:          DS32    1       // BASE_SV for number conversion
 IN:             DS32    1       // IN_SV Offset into tib
-OUT:            DS32    1       // OUT_SV Offset into pad
+OUT:            DS32    1       // OUT_SV Offset into pad or terminal string
 CSTATE:         DS32    1       // STATE_SV Compile STATE 0 = 
 // ADDRESS VALUES initialed in FWARM:
 INITSO:         DS32    1       // INITS0_SV Parameter Stack Addr

@@ -3071,6 +3071,9 @@
         <name>$PROJ_DIR$\FISH_STM32F4_IAR.s</name>
     </file>
     <file>
+        <name>$PROJ_DIR$\FISH_STM32F4_Peripheral_Register_ADDRS.h</name>
+    </file>
+    <file>
         <name>$PROJ_DIR$\ioSTM32F4x7x.h</name>
     </file>
     <file>
