@@ -13,7 +13,9 @@
 //	00C20C41
 
 // It's label will be GOPRO:
+ SECTION .text : CONST (2)
 
 GOPRO:
 
+ ALIGNROM 2,0xFFFFFFFF
 

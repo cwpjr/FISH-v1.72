@@ -100,11 +100,7 @@ NOOP_NFA:
 	DC8	'NOO'
 	DC8	'P'+0x80
  ALIGNROM 2,0xFFFFFFFF
-#ifdef FISH_STM32F4_Peripheral_Register_ADDRS
-	DC32	WC_FISH_Peripheral_REG_ADDR_GPIO
-#else
 	DC32	0	// 0 START OF DICTIONARY = Last word in search
-#endif
 NOOP:
 	DC32	.+5
  SECTION .text : CODE (2)
@@ -1474,7 +1470,8 @@ COLD:
 
  SECTION .text : CONST (2)
 WC_FISH_SYS_NFA:
-	DC8	0x80+4+12
+	DC8	0x80+4+12        // +4 is format chars constant
+                                // +n is Name lenght
         DC8     0x0D, 0x0A
 	DC8	'FISH System:'
         DC8     0x0D, 0x0A+0x80
@@ -4679,13 +4676,13 @@ KEY:
         LDR     w, = USART3_DR // Data Register w_r2
         LDR     x, = USART3_SR // Status Register x_r3
 rxRDY?:
-        LDR     n, [x]          // Get Line Status from [x_r3] to n_r2 
-//      LSRS    n, n, #5        // Bit 5 RXNE: Read data register not empty
+        LDR     n, [x]         // Get Line Status value from [x_r3], put in n_r2 
+//      LSRS    n, n, #5       // Bit 5 RXNE: Read data register not empty
 // THIS IS ___ AND FAILS TEXT DOWNLOAD
-        LSRS    n, n, #6        // Bit 6 ORIG - REQ'D FOR TEXT FILE DOWNLOAD
-        BCC     rxRDY?          // sets carry flag to fall thru
+        LSRS    n, n, #6       // Bit 6 ORIG - REQ'D FOR TEXT FILE DOWNLOAD
+        BCC     rxRDY?         // sets carry flag to fall thru
 
-        LDR     t, [w]          // t_r0 w_r2 should be uart data register
+        LDR     t, [w]         // t_r0 w_r2 should be uart data register
         TPUSH
 #else
 	DC32	DOCOL, LIT, 0X0D, SEMIS		// cr executes NULL
@@ -4724,7 +4721,7 @@ QKEY:
 #ifdef TRUE_EQU_NEG_ONE
 	SUBS	t, #1   // -1
 #else
-        ADDS    t, #1
+        ADDS    t, #1   // 1
 #endif
 #endif  // DEFAULT TO NO KEY IF IO2TP
 NO_KEY:
@@ -5510,7 +5507,8 @@ FISH:
 //	WC_FISH_PubRel: = FISH Reference Model: CATEGORY
  SECTION .text : CONST (2)
 WC_FISH_PubRel_NFA:
-	DC8	0x80+4+21
+	DC8	0x80+4+21        // +4 is format chars constant
+                                // +n is Name lenght
         DC8     0x0D, 0x0A
 	DC8	'FISH Reference Model:'
         DC8     0x0D, 0x0A+0x80
@@ -5523,6 +5521,11 @@ WC_FISH_PubRel_NFA:
 
 #ifdef FISH_STM_M3_PRO_WORDCAT
 $FISH_STM_M3_PRO_WORDSET.s
+#endif
+//=============================== WORDCAT ====================================//
+
+#ifdef FISH_STM32F4_GPIO
+$FISH_STM32F4_Peripheral_Register_ADDRS.h
 #endif
 // FIRST WORDCAT
 
