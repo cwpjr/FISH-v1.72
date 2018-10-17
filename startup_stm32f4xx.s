@@ -66,7 +66,7 @@
         EXTERN  __iar_program_start
         EXTERN  STM32Fx_COLD_FISH
         EXTERN  FMx_SYSTICK_ISR
-#ifdef CMSIS_C        
+#ifdef CMSIS_C
         EXTERN  HardFault_Handler
 #endif
         EXTERN  NVIC_SystemReset
