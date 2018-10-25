@@ -1,12 +1,12 @@
 ###################################################################################################
 #                                                                                                 #
-#     IAR Assembler V8.22.1.15669/W32 for ARM 26/Apr/2018  13:37:47                               #
+#     IAR Assembler V8.22.1.15669/W32 for ARM 12/Oct/2018  19:15:47                               #
 #     Copyright 1999-2018 IAR Systems AB.                                                         #
 #                                                                                                 #
 #           Source file   =  C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\FISH_STM32F4_IAR.s   #
 #           List file     =  C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\STM32F407_Disco_Debug\List\FISH_STM32F4_IAR.lst#
 #           Object file   =  C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\STM32F407_Disco_Debug\Obj\FISH_STM32F4_IAR.o#
-#           Command line  =  -f C:\Users\CLYDEW~1\AppData\Local\Temp\EW24ED.tmp                   #
+#           Command line  =  -f C:\Users\CLYDEW~1\AppData\Local\Temp\EW8826.tmp                   #
 #                            (C:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\FISH_STM32F4_IAR.s  #
 #                            -OC:\Users\Clyde W Phillips Jr\Desktop\FISH-v1.72\STM32F407_Disco_Debug\Obj #
 #                            -s+ -M<> -w+ -r -DFISH_PubRel_WORDSET -DFISH_Debug_WORDSET           #
@@ -106,11 +106,11 @@
                   0313820412D54
                   45414D20464F5
                   25448203A20  
-   79    0000006A 4170722032362         DC8     __DATE__        // Null string
+   79    0000006A 4F63742031322         DC8     __DATE__        // Null string
                   03230313800  
    80                           msg_FISH_TIMESTAMP:
    81    00000076 20617420              DC8     ' at '
-   82    0000007A 31333A33373A3         DC8     __TIME__        // Null string
+   82    0000007A 31393A31353A3         DC8     __TIME__        // Null string
                   43700        
    83                           #ifdef EOL_NAK
    84                           msg_SIGNON_DLE:
